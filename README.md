@@ -1,6 +1,12 @@
-# Monitor your Mikrotik router with Prometheus and Grafana
+<h1 align="center">MikroTik Monitoring</h1>
+<p align="center">
+    <a href="https://github.com/rios0rios0/mikrotik-monitoring/releases/latest">
+        <img src="https://img.shields.io/github/release/rios0rios0/mikrotik-monitoring.svg?style=for-the-badge&logo=github" alt="Latest Release"/></a>
+    <a href="https://github.com/rios0rios0/mikrotik-monitoring/blob/main/LICENSE">
+        <img src="https://img.shields.io/github/license/rios0rios0/mikrotik-monitoring.svg?style=for-the-badge&logo=github" alt="License"/></a>
+</p>
 
-Use Grafana & Prometheus to monitor Mikrotik devices. This projects serves as a ready to use blueprint for monitoring based on Docker. It is designed and tested to be run on Raspberry Pis.
+Monitor your MikroTik router with Prometheus and Grafana. This project serves as a ready to use blueprint for monitoring based on Docker. It is designed and tested to be run on Raspberry Pis.
 
 ## Features
 
@@ -30,7 +36,7 @@ Use Grafana & Prometheus to monitor Mikrotik devices. This projects serves as a 
 - Firewall Monitoring
   - rules traffic
   - logged rules traffic
-  - Ipv4 & IPv6
+  - IPv4 & IPv6
   - bandwidth
   - active users
 - Wireless Monitoring
@@ -53,10 +59,10 @@ Use Grafana & Prometheus to monitor Mikrotik devices. This projects serves as a 
 ## Setup
 
 - Router running RouterOS 7.x.x
-- Raspberry Pi 4 with 2 gb RAM (other PIs may also work, but I wanted ARM 64 bit)
-- before opening a new issue, please take a look at the [FAQ](#FAQ)
+- Raspberry Pi 4 with 2 GB RAM (other PIs may also work, but ARM 64 bit is recommended)
+- Before opening a new issue, please take a look at the [FAQ](#faq)
 
-## Demo pictures
+## Demo Pictures
 
 ![General system stats](./doc/system.png)
 
@@ -73,9 +79,7 @@ Use Grafana & Prometheus to monitor Mikrotik devices. This projects serves as a 
 
 ## Installation
 
-## Mikrotik Router
-
-At first you need to prepare your router.
+### MikroTik Router
 
 Create a group on the device that has API and read-only access:
 
@@ -85,17 +89,15 @@ Create a user that is part of the group:
 
 `/user add name=prometheus group=prometheus password=TOP_SECRET`
 
-## Prepare Raspi
+### Prepare Raspberry Pi
 
-You need Ubuntu Server for ARM 64 bit in order to use this setup. You may also use Raspian, but then you are limited to 32bit ARM executables. This would mean, that you need to compile the `mikrotik-exporter` by hand, because there are no pre built 32-bit Docker images.
-
-You need to execute the following steps on the target machine itself (e.g. Raspberry Pi).
+You need Ubuntu Server for ARM 64 bit in order to use this setup. You may also use Raspian, but then you are limited to 32bit ARM executables. This would mean that you need to compile the `mikrotik-exporter` by hand, because there are no pre-built 32-bit Docker images.
 
 Install Docker ([official docs](https://docs.docker.com/engine/install/debian/)):
 
 `sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin`
 
-**:warning: Note:** `docker-compose` was originally written in Python, but it was deprecated some time ago. [Migrate to Compose V2](https://docs.docker.com/compose/migrate/).
+> **Note:** `docker-compose` was originally written in Python, but it was deprecated some time ago. [Migrate to Compose V2](https://docs.docker.com/compose/migrate/).
 
 <details>
 <summary>Optional: Build the Docker Image for mktxp</summary>
@@ -125,11 +127,10 @@ Now get this repo and install all services:
 # Clone this repo
 git clone https://github.com/M0r13n/mikrotik_monitoring.git
 
-
 # Go into the cloned directory
 cd mikrotik_monitoring
 
-# Let docker-compose do it's job
+# Let docker-compose do its job
 docker compose up -d
 ```
 
@@ -137,27 +138,25 @@ You may need to adjust the following configuration files and add your own creden
 
 - `mktxp/mktxp.conf`
 
-
 Done. You should now be able to open the Grafana dashboard on Port 3000 of your Raspberry Pi.
 
 ## Latency Monitoring
 
-This projects uses the Prometheus Blackbox exporter to measure network latency. By default three targets are configured:
+This project uses the Prometheus Blackbox exporter to measure network latency. By default three targets are configured:
 
 - 1.1.1.1 (Cloudflare)
 - 8.8.8.8 (Google)
 - 9.9.9.9 (IBM)
 
-You may adjust **blackbox/blackbox.yml** according to your needs.
+You may adjust `blackbox/blackbox.yml` according to your needs.
 
 ## Multiple Nodes
 
-It is possible to monitor multiple (Mikrotik) devices. Just change add as many devices to `mktxp/mktxp.conf` as you want.
+It is possible to monitor multiple (MikroTik) devices. Just add as many devices to `mktxp/mktxp.conf` as you want.
 
 ## HTTPS
 
-It is also possible to access the Grafana Dashboard over HTTPS.
-Depending on your security requirements and/or threat model it might be a good idea to enable HTTPS.
+It is also possible to access the Grafana Dashboard over HTTPS. Depending on your security requirements and/or threat model it might be a good idea to enable HTTPS.
 
 Generate a self signed certificate for your domain:
 
@@ -183,7 +182,6 @@ server {
    proxy_pass http://grafana:3000/;
   }
 }
-
 ```
 
 ## AppArmor
@@ -195,14 +193,6 @@ cp ./docker-armor /etc/apparmor.d/docker-armor
 apparmor_parser -r -W /etc/apparmor.d/docker-armor
 docker compose -f docker-compose-armored.yml  up -d
 ```
-
-## Resources
-
-- [A blog post by Devin Smith that first got me interested](https://blog.devinsmith.co.za/home-internet-grafana-lockdown/)
-- [A somewhat useable Grafana Dashboard](https://grafana.com/grafana/dashboards/10950)
-- [A Prometheus exporter for Mikrotik devices written in Python](https://github.com/akpw/mktxp).
-- [A Prometheus exporter for Mikrotik devices written in Go](https://github.com/nshttpd/mikrotik-exporter)
-- [Prometheus Blackbox exporter](https://github.com/prometheus/blackbox_exporter/blob/master/example.yml)
 
 ## FAQ
 
@@ -219,40 +209,32 @@ It might happen that the Grafana dashboard loads, but the graphs remain empty. I
 
 ### What distinguishes this project from other similar projects?
 
-This project is only a personal hobby.
-It do it mainly to learn something and to improve my skills.
-Therefore, the project does not compete with other projects.
-Nor do I aim for completeness or perfection.
-The goal of this project is to develop a monitoring solution for multiple RouterOS devices simultaneously that is resource-efficient and scalable.
+This project is only a personal hobby. It is done mainly to learn something and to improve skills. Therefore, the project does not compete with other projects. Nor does it aim for completeness or perfection. The goal of this project is to develop a monitoring solution for multiple RouterOS devices simultaneously that is resource-efficient and scalable.
 
-### Why you don't use the SNMP for monitoring?
+### Why not use SNMP for monitoring?
 
-Firstly SNMP based monitoring is painfully slow.
-In my experience SNMP walks are slow and CPU heavy.
-And I am not [alone with this](https://forum.mikrotik.com/viewtopic.php?t=132304).
-In my experience the API is much faster and produces less stress on the CPU of the monitored device.
+Firstly SNMP based monitoring is painfully slow. SNMP walks are slow and CPU heavy. The API is much faster and produces less stress on the CPU of the monitored device.
 
-Secondly I never really got used to the way that SNMP metrics and queries are structured.
-I find them very hard to read.
+Secondly the API offers a lot of flexibility. Any command can be executed on RouterOS via the API. Thus it is possible to collect complex metrics.
 
-In addition, the API offers a lot of flexibility.
-Any command can be executed on RouterOS via the API.
-Thus it is possible to collect complex metrics.
+### I get a PermissionError when running docker compose up
 
-### I get a PermissionError when running docker-compose up
+When bind-mounting a directory from the host into a container, files and directories maintain the permissions they have on the host. The Prometheus exporter mktxp may update its configuration if some keys are missing from the configuration file. This can cause the container to crash if the user inside the container lacks write permissions.
 
-When bind-mounting a directory from the host into a container, files and directories
-maintain the permissions they **have on the host**. These can not be changed by Docker.
-Typically, a bind-mounted directory has permissions like these: `rwxrwxr-x`.
-This means that the container can read from the bind-mounted directory. But it can not
-write or modify the mounted files.
+In order to resolve this issue, make sure that all keys that mktxp currently supports are listed in your `mktxp.conf` file.
 
-This mostly works fine. But the Prometheus exporter mktxp has a specialty:
-It may update it's configuration if some keys are missing from the configuration file.
-Imagine, that the key `ipv6_firewall` is missing from the **mktxp.conf**. In this case
-mktxp will add `ipv6_firewall=false` to the configuration file instead of failing.
-This is a helpful feature, but can cause the container to crash, if the user inside
-the container lacks write permissions.
+## Resources
 
-In order to resolve this issue, make sure that all keys that mktxp currently supports
-are listed in your **mktxp.conf** file.
+- [A blog post by Devin Smith that first got me interested](https://blog.devinsmith.co.za/home-internet-grafana-lockdown/)
+- [A somewhat useable Grafana Dashboard](https://grafana.com/grafana/dashboards/10950)
+- [A Prometheus exporter for MikroTik devices written in Python](https://github.com/akpw/mktxp)
+- [A Prometheus exporter for MikroTik devices written in Go](https://github.com/nshttpd/mikrotik-exporter)
+- [Prometheus Blackbox exporter](https://github.com/prometheus/blackbox_exporter/blob/master/example.yml)
+
+## Contributing
+
+Contributions are welcome. Please open an issue or submit a pull request.
+
+## License
+
+This project is licensed under the terms specified in the [LICENSE](LICENSE) file.
