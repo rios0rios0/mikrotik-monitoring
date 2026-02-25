@@ -1,5 +1,7 @@
 .DEFAULT_GOAL := run
 
+.PHONY: clean run
+
 clean:
 	docker compose down
 	docker rm -f $(docker ps -a -q)
